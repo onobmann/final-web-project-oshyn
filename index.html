@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oshyn Nobmann | Portfolio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a5f;
+      --accent:  #2e86de;
+      --accent2: #54a0ff;
+      --light:   #f4f7fb;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #333;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      background: rgba(30, 58, 95, 0.96);
+      backdrop-filter: blur(12px);
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: 0.5px;
+    }
+    .nav-link:hover { color: var(--accent2) !important; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2e86de 60%, #54a0ff 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+      right: -150px; top: -100px;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+    }
+    .hero .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.85;
+      max-width: 560px;
+    }
+    .hero .tagline {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      opacity: 0.65;
+    }
+    .btn-hero-primary {
+      background: #fff;
+      color: var(--primary);
+      font-weight: 700;
+      padding: 12px 36px;
+      border-radius: 50px;
+      border: none;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-block;
+    }
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      color: var(--primary);
+    }
+    .btn-hero-outline {
+      background: transparent;
+      color: #fff;
+      font-weight: 600;
+      padding: 12px 36px;
+      border-radius: 50px;
+      border: 2px solid rgba(255,255,255,0.6);
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-hero-outline:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: #fff;
+      color: #fff;
+    }
+
+    /* ── Section headings ── */
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .title-underline {
+      width: 60px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── About cards ── */
+    .about-card {
+      border: none;
+      border-radius: 16px;
+      padding: 28px;
+      background: #fff;
+      box-shadow: 0 2px 16px rgba(30,58,95,0.08);
+      transition: transform 0.25s, box-shadow 0.25s;
+      height: 100%;
+    }
+    .about-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 32px rgba(30,58,95,0.14);
+    }
+    .about-card .icon-wrap {
+      width: 52px; height: 52px;
+      background: var(--light);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .about-card h5 { font-weight: 700; color: var(--primary); }
+
+    /* ── Timeline ── */
+    .timeline { position: relative; }
+    .timeline-item {
+      padding-left: 28px;
+      border-left: 3px solid #dce8f7;
+      margin-bottom: 32px;
+      position: relative;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -8px; top: 5px;
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border: 3px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .timeline-date {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent);
+    }
+    .timeline-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--primary);
+      margin: 3px 0 2px;
+    }
+    .timeline-org {
+      font-weight: 600;
+      color: #555;
+      font-size: 0.92rem;
+    }
+    .timeline-body {
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 6px;
+      line-height: 1.7;
+    }
+
+    /* ── Skills ── */
+    .skill-chip {
+      display: inline-block;
+      background: var(--light);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin: 4px 3px;
+      border: 1px solid #dce8f7;
+      transition: background 0.2s, color 0.2s;
+    }
+    .skill-chip:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* ── Honor cards ── */
+    .honor-card {
+      border: none;
+      border-radius: 12px;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(30,58,95,0.07);
+      height: 100%;
+    }
+    .honor-card .honor-icon {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+    .honor-card h6 { font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+
+    /* ── Social icons ── */
+    .social-btn {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--light);
+      color: var(--primary);
+      font-size: 1.3rem;
+      text-decoration: none;
+      margin: 0 6px;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      border: 2px solid #dce8f7;
+    }
+    .social-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--primary);
+      color: rgba(255,255,255,0.7);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+    footer a:hover { color: #fff; }
+
+    .bg-soft { background: var(--light); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════ NAVBAR ═══════════════════ -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand text-white" href="#home">Oshyn Nobmann</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto gap-1">
+          <li class="nav-item"><a class="nav-link text-white-50" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link text-white-50" href="#resume">Resume</a></li>
+          <li class="nav-item"><a class="nav-link text-white-50" href="#skills">Skills</a></li>
+          <li class="nav-item"><a class="nav-link text-white-50" href="#honors">Honors</a></li>
+          <li class="nav-item"><a class="nav-link text-white-50" href="#contact">Contact</a></li>
+          <li class="nav-item ms-2">
+            <a class="nav-link text-white border border-secondary rounded-pill px-3" href="scratch.html">Running Page →</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <section id="home" class="hero">
+    <div class="container position-relative">
+      <div class="row">
+        <div class="col-lg-7">
+          <p class="tagline mb-3">Pre-Business · BYU Marriott · Strategy</p>
+          <h1 class="mb-4">
+            Hi, I'm<br>
+            <span style="color: #74b9ff;">Oshyn Nobmann</span>
+          </h1>
+          <p class="subtitle mb-5">
+            Raised in Hawaii. Served in West Africa and Chicago. Now at BYU pursuing the Marriott Strategy Program. I bring cross-cultural depth, operational instincts, and a bias for building things that work.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="#resume" class="btn-hero-primary">View Resume</a>
+            <a href="#contact" class="btn-hero-outline">Get in Touch</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ ABOUT ═══════════════════ -->
+  <section id="about" style="padding: 80px 0;">
+    <div class="container">
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+          <p class="section-label">Who I Am</p>
+          <h2 class="section-title">About Me</h2>
+          <div class="title-underline"></div>
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <p class="lead" style="color: #444; line-height: 1.8;">
+                I'm a Pre-Business student at Brigham Young University, applying to the Strategy Program at the Marriott School of Business. My path here has been anything but linear — growing up in Hawaii, completing a 2-year service mission across Côte d'Ivoire and Chicago, and now working as a Patient Advocate while building toward a career in strategy consulting.
+              </p>
+              <p style="color: #666; line-height: 1.8;">
+                I'm fluent in French, an Eagle Scout, and a Valedictorian who still believes the most important learning happens outside the classroom. When I'm not working or studying, you'll find me running — it's where I think through my hardest problems.
+              </p>
+              <a href="scratch.html" class="btn btn-outline-primary mt-2 rounded-pill px-4">
+                <i class="bi bi-lightning-charge me-1"></i> See My Running Page
+              </a>
+            </div>
+            <div class="col-md-6">
+              <div class="row g-3">
+                <div class="col-6">
+                  <div class="about-card">
+                    <div class="icon-wrap"><i class="bi bi-graph-up-arrow"></i></div>
+                    <h5>Strategy</h5>
+                    <small class="text-muted">Applying to Marriott Strategy Program</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="about-card">
+                    <div class="icon-wrap"><i class="bi bi-translate"></i></div>
+                    <h5>Bilingual</h5>
+                    <small class="text-muted">English (native) · French (fluent)</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="about-card">
+                    <div class="icon-wrap"><i class="bi bi-bar-chart-line"></i></div>
+                    <h5>Data & Analytics</h5>
+                    <small class="text-muted">Tableau, Excel VBA, optimization</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="about-card">
+                    <div class="icon-wrap"><i class="bi bi-people"></i></div>
+                    <h5>Leadership</h5>
+                    <small class="text-muted">Cross-cultural · Mission · Eagle Scout</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ RESUME ═══════════════════ -->
+  <section id="resume" class="bg-soft" style="padding: 80px 0;">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <p class="section-label">My Background</p>
+          <h2 class="section-title">Resume</h2>
+          <div class="title-underline"></div>
+
+          <div class="row g-5">
+
+            <!-- Education -->
+            <div class="col-md-5">
+              <h4 class="mb-4 d-flex align-items-center gap-2" style="color: var(--primary);">
+                <i class="bi bi-mortarboard-fill" style="color: var(--accent);"></i> Education
+              </h4>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-date">Aug 2024 – Apr 2029</div>
+                  <div class="timeline-title">B.S., Pre-Business</div>
+                  <div class="timeline-org">Brigham Young University · Provo, UT</div>
+                  <div class="timeline-body">
+                    GPA: 3.43 / 4.00<br>
+                    Applying to Strategy Program, Marriott School of Business
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-date">Graduated 2022</div>
+                  <div class="timeline-title">High School Diploma — Valedictorian</div>
+                  <div class="timeline-org">Leilehua High School</div>
+                  <div class="timeline-body">
+                    Ranked #1 academically in graduating class
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Experience -->
+            <div class="col-md-7">
+              <h4 class="mb-4 d-flex align-items-center gap-2" style="color: var(--primary);">
+                <i class="bi bi-briefcase-fill" style="color: var(--accent);"></i> Experience
+              </h4>
+              <div class="timeline">
+
+                <div class="timeline-item">
+                  <div class="timeline-date">May 2026 – Present</div>
+                  <div class="timeline-title">Patient Advocate</div>
+                  <div class="timeline-org">Movement Clinic · Lehi, UT</div>
+                  <div class="timeline-body">
+                    Primary liaison between patients and clinical staff at a specialized neuromuscular rehabilitation clinic. Managed intake, scheduling, and clinic flow. Built and deployed a patient note documentation web application used daily by clinical staff, reducing documentation friction and improving care continuity.
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-date">2022 – 2024</div>
+                  <div class="timeline-title">Volunteer Service Representative</div>
+                  <div class="timeline-org">The Church of Jesus Christ of Latter-day Saints · Côte d'Ivoire &amp; Chicago, IL</div>
+                  <div class="timeline-body">
+                    Completed a self-directed, 2-year full-time service mission across West Africa (8 months) and Chicago (16 months). Led and trained junior volunteers, navigated cross-cultural communication daily, and operated fluently in French throughout.
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-date">2022</div>
+                  <div class="timeline-title">Retail Associate</div>
+                  <div class="timeline-org">Soha Hawaii</div>
+                  <div class="timeline-body">
+                    Delivered high-quality customer service, processed transactions, and collaborated with team members to hit sales targets in a fast-paced retail environment.
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-date">2018 – 2022</div>
+                  <div class="timeline-title">Paddleboard Tour Guide &amp; Instructor</div>
+                  <div class="timeline-org">Rainbow Watersports</div>
+                  <div class="timeline-body">
+                    Guided groups of 5–15 participants on ocean paddleboard tours. Trained new paddlers, managed multi-group logistics independently, and built repeat clientele through high-quality relationship-driven service.
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div><!-- /row -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ SKILLS ═══════════════════ -->
+  <section id="skills" style="padding: 80px 0;">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <p class="section-label">What I Know</p>
+          <h2 class="section-title">Skills &amp; Technologies</h2>
+          <div class="title-underline"></div>
+          <div class="row g-4">
+            <div class="col-sm-6 col-md-3">
+              <h6 class="text-muted fw-bold mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1.5px;">Analytics &amp; Tech</h6>
+              <div>
+                <span class="skill-chip">Excel (VBA)</span>
+                <span class="skill-chip">Tableau</span>
+                <span class="skill-chip">Statistical Modeling</span>
+                <span class="skill-chip">Solver/Optimization</span>
+                <span class="skill-chip">HTML / CSS</span>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <h6 class="text-muted fw-bold mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1.5px;">Business</h6>
+              <div>
+                <span class="skill-chip">Operational Planning</span>
+                <span class="skill-chip">Client Communication</span>
+                <span class="skill-chip">Team Management</span>
+                <span class="skill-chip">Process Improvement</span>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <h6 class="text-muted fw-bold mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1.5px;">Leadership</h6>
+              <div>
+                <span class="skill-chip">Cross-Cultural Leadership</span>
+                <span class="skill-chip">Coaching</span>
+                <span class="skill-chip">Public Speaking</span>
+                <span class="skill-chip">Stakeholder Management</span>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <h6 class="text-muted fw-bold mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1.5px;">Languages</h6>
+              <div>
+                <span class="skill-chip">English (Native)</span>
+                <span class="skill-chip">French (Fluent)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ HONORS ═══════════════════ -->
+  <section id="honors" class="bg-soft" style="padding: 80px 0;">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <p class="section-label">Achievements</p>
+          <h2 class="section-title">Leadership &amp; Honors</h2>
+          <div class="title-underline"></div>
+          <div class="row g-3">
+            <div class="col-sm-6 col-md-3">
+              <div class="honor-card">
+                <div class="honor-icon">🦅</div>
+                <h6>Eagle Scout</h6>
+                <small class="text-muted">Boy Scouts of America · Earned 2018. Designed and led an independent service project managing planning, logistics, and team leadership.</small>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="honor-card">
+                <div class="honor-icon">🏆</div>
+                <h6>Valedictorian</h6>
+                <small class="text-muted">Leilehua High School · Ranked #1 academically in graduating class across a rigorous college-preparatory curriculum.</small>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="honor-card">
+                <div class="honor-icon">🌍</div>
+                <h6>Full-Time Mission</h6>
+                <small class="text-muted">2 years across Côte d'Ivoire &amp; Chicago. Self-directed leadership, French immersion, cross-cultural service.</small>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <div class="honor-card">
+                <div class="honor-icon">🏃</div>
+                <h6>Distance Runner</h6>
+                <small class="text-muted">Avid long-distance runner. Running is where discipline meets clarity — a practice that fuels everything else.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ CONTACT ═══════════════════ -->
+  <section id="contact" style="padding: 80px 0;">
+    <div class="container text-center">
+      <div class="row justify-content-center">
+        <div class="col-lg-6">
+          <p class="section-label">Say Hello</p>
+          <h2 class="section-title mx-auto">Get In Touch</h2>
+          <div class="title-underline mx-auto"></div>
+          <p class="lead mb-5" style="color: #555;">
+            Open to internships, strategy consulting conversations, and collaborative projects. Let's connect.
+          </p>
+          <div class="mb-5">
+            <a href="mailto:oshynnobmann@gmail.com" class="social-btn" title="Email">
+              <i class="bi bi-envelope-fill"></i>
+            </a>
+            <a href="https://linkedin.com/in/oshyn-nobmann-523285250" class="social-btn" title="LinkedIn" target="_blank">
+              <i class="bi bi-linkedin"></i>
+            </a>
+            <a href="https://github.com/onobmann" class="social-btn" title="GitHub" target="_blank">
+              <i class="bi bi-github"></i>
+            </a>
+          </div>
+          <a href="mailto:oshynnobmann@gmail.com" class="btn btn-primary btn-lg rounded-pill px-5">
+            <i class="bi bi-send me-2"></i>Send a Message
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer class="py-4 text-center">
+    <div class="container">
+      <p class="mb-2 fw-semibold text-white">Oshyn Nobmann &nbsp;·&nbsp; BYU Pre-Business</p>
+      <p class="mb-0" style="font-size: 0.9rem;">
+        <a href="scratch.html">🏃 Running Page</a>
+        &nbsp;·&nbsp;
+        <a href="webapp.html">⚡ PaceForge App</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/onobmann" target="_blank">GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

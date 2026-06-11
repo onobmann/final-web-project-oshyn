@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  webapp.html — PaceForge: Running Pace Calculator & Race Predictor
+  ✓ Single page — all CSS, HTML, and JS in one file
+  ✓ Linked from scratch.html
+  ✓ Creative beyond a basic app:
+      - Pace ↔ Time calculator (both directions)
+      - Race predictor across 6 distances using Riegel's formula (T2 = T1 × (D2/D1)^1.06)
+      - Mile-by-mile split generator with animated progress bars
+      - "Famous runner comparison" benchmarks
+      - Beautiful animated UI with running track theme
+  AI-assisted and iteratively refined.
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaceForge ⚡ — Running Pace Calculator</title>
+  <style>
+    /* ══════════════════ RESET & BASE ══════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d0d1a;
+      --card:     #141428;
+      --card2:    #1a1a38;
+      --border:   rgba(255,255,255,0.08);
+      --red:      #e94560;
+      --orange:   #ff6b35;
+      --blue:     #4fc3f7;
+      --green:    #69f0ae;
+      --text:     #e8e8f0;
+      --muted:    rgba(232,232,240,0.55);
+      --radius:   16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ══════════════════ HEADER ══════════════════ */
+    .app-header {
+      background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 50%, #0d1a2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-header::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(233,69,96,0.12) 0%, transparent 70%);
+      top: -200px; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .app-header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    .app-header p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-top: 8px;
+    }
+    .back-link {
+      position: absolute;
+      left: 20px; top: 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--red); }
+
+    /* ══════════════════ TABS ══════════════════ */
+    .tab-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 24px 16px 0;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .tab-btn:hover { border-color: var(--red); color: var(--text); }
+    .tab-btn.active {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+
+    /* ══════════════════ PANELS ══════════════════ */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 32px 16px 64px;
+    }
+
+    /* ══════════════════ CARDS ══════════════════ */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title span { font-size: 1.3rem; }
+
+    /* ══════════════════ FORM CONTROLS ══════════════════ */
+    .form-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      align-items: flex-end;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 120px;
+    }
+    label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+    }
+    input[type="number"], select {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: 10px;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+    input[type="number"]:focus, select:focus {
+      border-color: var(--red);
+    }
+    input[type="number"]::placeholder { color: var(--muted); }
+
+    /* ══════════════════ BUTTONS ══════════════════ */
+    .btn-calc {
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 14px 36px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      letter-spacing: 0.5px;
+    }
+    .btn-calc:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(233,69,96,0.35);
+    }
+    .btn-calc:active { transform: translateY(0); opacity: 0.9; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 10px 24px;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      margin-left: 8px;
+    }
+    .btn-secondary:hover { border-color: var(--red); color: var(--red); }
+
+    /* ══════════════════ RESULTS ══════════════════ */
+    .result-box {
+      background: linear-gradient(135deg, rgba(233,69,96,0.12), rgba(255,107,53,0.08));
+      border: 1px solid rgba(233,69,96,0.3);
+      border-radius: 14px;
+      padding: 24px;
+      margin-top: 20px;
+      display: none;
+    }
+    .result-box.show { display: block; animation: fadeIn 0.35s ease; }
+
+    @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+    .result-main {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .result-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+    }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .result-stat {
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+    }
+    .result-stat-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--blue);
+    }
+    .result-stat-lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* ══════════════════ RACE TABLE ══════════════════ */
+    .race-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    .race-table th {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .race-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.95rem;
+    }
+    .race-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .race-table .pace-cell {
+      font-weight: 700;
+      color: var(--blue);
+    }
+    .race-table .time-cell {
+      font-weight: 800;
+      color: var(--text);
+    }
+    .race-table .diff-cell {
+      font-size: 0.82rem;
+      color: var(--green);
+    }
+    .input-race-badge {
+      background: var(--red);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ══════════════════ SPLITS ══════════════════ */
+    .splits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .split-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: fadeIn 0.2s ease both;
+    }
+    .split-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      width: 52px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .split-bar-wrap {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      height: 28px;
+      overflow: hidden;
+    }
+    .split-bar {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: width 0.6s ease;
+    }
+    .split-time {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--blue);
+      width: 70px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .split-cumulative {
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 70px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    /* ══════════════════ BENCHMARKS ══════════════════ */
+    .benchmark-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .benchmark-card {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .benchmark-card .b-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .benchmark-card .b-time {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--orange);
+    }
+    .benchmark-card .b-desc {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .benchmark-card .b-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      border-radius: 2px;
+      margin-top: 12px;
+    }
+    .your-marker {
+      position: absolute;
+      top: 0; right: 0;
+      background: var(--green);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ══════════════════ MODE TOGGLE ══════════════════ */
+    .mode-toggle {
+      display: flex;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 4px;
+      gap: 4px;
+      width: fit-content;
+      margin-bottom: 20px;
+    }
+    .mode-btn {
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+      transition: background 0.2s, color 0.2s;
+    }
+    .mode-btn.active {
+      background: var(--red);
+      color: #fff;
+    }
+
+    /* ══════════════════ DIVIDER ══════════════════ */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    /* ══════════════════ INFO TEXT ══════════════════ */
+    .info-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    /* ══════════════════ ERROR ══════════════════ */
+    .error-msg {
+      color: var(--red);
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-top: 12px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* ══════════════════ TRACK DECORATION ══════════════════ */
+    .track-deco {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 0;
+      opacity: 0.3;
+    }
+    .track-deco span {
+      width: 40px; height: 5px;
+      background: #fff;
+      border-radius: 3px;
+    }
+
+    /* ══════════════════ FOOTER ══════════════════ */
+    .app-footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .app-footer a { color: var(--red); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════ HEADER ════════════════════ -->
+  <div class="app-header">
+    <a href="scratch.html" class="back-link">← Running Page</a>
+    <h1>⚡ PaceForge</h1>
+    <p>Calculate pace · Predict race times · Generate splits</p>
+    <div class="track-deco">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- ════════════════════ TABS ════════════════════ -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('pace')">🏃 Pace Calculator</button>
+    <button class="tab-btn" onclick="switchTab('predict')">📊 Race Predictor</button>
+    <button class="tab-btn" onclick="switchTab('splits')">📋 Split Generator</button>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       PANEL 1 — PACE CALCULATOR
+  ════════════════════════════════════════════ -->
+  <div id="panel-pace" class="panel active">
+    <div class="container">
+
+      <div class="card">
+        <div class="card-title"><span>🏃</span> Pace Calculator</div>
+
+        <!-- Mode toggle: calculate Pace OR calculate Finish Time -->
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="mode-btn-pace" onclick="setMode('pace')">Find My Pace</button>
+          <button class="mode-btn" id="mode-btn-time" onclick="setMode('time')">Find Finish Time</button>
+        </div>
+
+        <!-- Mode A: Given distance + finish time → compute pace -->
+        <div id="mode-pace">
+          <p class="info-text">Enter your race distance and total finish time to calculate your average pace per mile and per kilometer.</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Distance</label>
+              <select id="dist-a">
+                <option value="3.10686">5K (3.11 mi)</option>
+                <option value="6.21371">10K (6.21 mi)</option>
+                <option value="13.1094">Half Marathon (13.1 mi)</option>
+                <option value="26.2188" selected>Marathon (26.2 mi)</option>
+                <option value="custom">Custom…</option>
+              </select>
+            </div>
+            <div class="form-group" id="custom-dist-group-a" style="display:none;">
+              <label>Miles</label>
+              <input type="number" id="custom-dist-a" placeholder="e.g. 10" min="0.1" step="0.01">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Hours</label>
+              <input type="number" id="hours-a" placeholder="0" min="0" max="24">
+            </div>
+            <div class="form-group">
+              <label>Minutes</label>
+              <input type="number" id="mins-a" placeholder="0" min="0" max="59">
+            </div>
+            <div class="form-group">
+              <label>Seconds</label>
+              <input type="number" id="secs-a" placeholder="0" min="0" max="59">
+            </div>
+          </div>
+          <div class="error-msg" id="err-a">Please enter a valid time (at least one field > 0).</div>
+          <button class="btn-calc" onclick="calcPace()">Calculate Pace</button>
+          <button class="btn-secondary" onclick="clearPace()">Clear</button>
+
+          <div class="result-box" id="result-a">
+            <div class="result-label">Average Pace per Mile</div>
+            <div class="result-main" id="pace-mi">–</div>
+            <div class="result-grid">
+              <div class="result-stat">
+                <div class="result-stat-val" id="pace-km">–</div>
+                <div class="result-stat-lbl">per Kilometer</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-val" id="pace-mph">–</div>
+                <div class="result-stat-lbl">Miles / Hour</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-val" id="pace-kph">–</div>
+                <div class="result-stat-lbl">km / Hour</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-val" id="pace-total">–</div>
+                <div class="result-stat-lbl">Total Time</div>
+              </div>
+            </div>
+            <div id="pace-benchmark" style="margin-top:16px;"></div>
+          </div>
+        </div>
+
+        <!-- Mode B: Given pace + distance → compute finish time -->
+        <div id="mode-time" style="display:none;">
+          <p class="info-text">Enter your target pace and race distance to calculate your projected finish time.</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Distance</label>
+              <select id="dist-b">
+                <option value="3.10686">5K</option>
+                <option value="6.21371">10K</option>
+                <option value="13.1094">Half Marathon</option>
+                <option value="26.2188" selected>Marathon</option>
+                <option value="custom">Custom…</option>
+              </select>
+            </div>
+            <div class="form-group" id="custom-dist-group-b" style="display:none;">
+              <label>Miles</label>
+              <input type="number" id="custom-dist-b" placeholder="e.g. 10" min="0.1" step="0.01">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Pace (min / mile)</label>
+              <input type="number" id="pace-min-b" placeholder="e.g. 9" min="1" max="59">
+            </div>
+            <div class="form-group">
+              <label>Pace (sec / mile)</label>
+              <input type="number" id="pace-sec-b" placeholder="e.g. 30" min="0" max="59">
+            </div>
+          </div>
+          <div class="error-msg" id="err-b">Please enter a valid pace.</div>
+          <button class="btn-calc" onclick="calcTime()">Calculate Finish Time</button>
+          <button class="btn-secondary" onclick="clearTime()">Clear</button>
+
+          <div class="result-box" id="result-b">
+            <div class="result-label">Projected Finish Time</div>
+            <div class="result-main" id="finish-time">–</div>
+            <div class="result-grid">
+              <div class="result-stat">
+                <div class="result-stat-val" id="b-pace-km">–</div>
+                <div class="result-stat-lbl">per Kilometer</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-val" id="b-speed-mph">–</div>
+                <div class="result-stat-lbl">Miles / Hour</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-val" id="b-speed-kph">–</div>
+                <div class="result-stat-lbl">km / Hour</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /card -->
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       PANEL 2 — RACE PREDICTOR
+  ════════════════════════════════════════════ -->
+  <div id="panel-predict" class="panel">
+    <div class="container">
+      <div class="card">
+        <div class="card-title"><span>📊</span> Race Time Predictor</div>
+        <p class="info-text">
+          Enter a recent race result and we'll predict your finish times for all major distances using
+          <strong>Riegel's Formula</strong>: T₂ = T₁ × (D₂/D₁)^1.06. This accounts for the
+          disproportionate fatigue cost of longer distances.
+        </p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>I ran a…</label>
+            <select id="pred-dist">
+              <option value="5">5K</option>
+              <option value="10">10K</option>
+              <option value="21.0975">Half Marathon</option>
+              <option value="42.195">Marathon</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Hours</label>
+            <input type="number" id="pred-h" placeholder="0" min="0" max="24">
+          </div>
+          <div class="form-group">
+            <label>Minutes</label>
+            <input type="number" id="pred-m" placeholder="25" min="0" max="59">
+          </div>
+          <div class="form-group">
+            <label>Seconds</label>
+            <input type="number" id="pred-s" placeholder="30" min="0" max="59">
+          </div>
+        </div>
+        <div class="error-msg" id="err-pred">Please enter a valid time.</div>
+        <button class="btn-calc" onclick="predictRaces()">Predict My Times</button>
+        <button class="btn-secondary" onclick="clearPredict()">Clear</button>
+
+        <div class="result-box" id="result-pred">
+          <table class="race-table" id="pred-table">
+            <thead>
+              <tr>
+                <th>Race</th>
+                <th>Predicted Time</th>
+                <th>Avg Pace / mi</th>
+                <th>vs World Record</th>
+              </tr>
+            </thead>
+            <tbody id="pred-tbody"></tbody>
+          </table>
+          <p style="font-size:0.75rem; color:var(--muted); margin-top:16px;">
+            * Predictions assume consistent training. Individual results vary based on course profile, conditions, and fitness.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAMOUS BENCHMARKS CARD -->
+      <div class="card">
+        <div class="card-title"><span>🌍</span> Famous Marathon Benchmarks</div>
+        <p class="info-text">See how the world's greatest marathon runners have defined the limits of human performance.</p>
+        <div class="benchmark-grid" id="benchmark-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       PANEL 3 — SPLIT GENERATOR
+  ════════════════════════════════════════════ -->
+  <div id="panel-splits" class="panel">
+    <div class="container">
+      <div class="card">
+        <div class="card-title"><span>📋</span> Split Generator</div>
+        <p class="info-text">
+          Generate an even-pace split plan for any race. Knowing your splits in advance makes
+          pacing decisions during the race automatic.
+        </p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Race Distance</label>
+            <select id="split-dist" onchange="updateSplitUnits()">
+              <option value="3.10686">5K</option>
+              <option value="6.21371">10K</option>
+              <option value="13.1094">Half Marathon</option>
+              <option value="26.2188" selected>Marathon</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </div>
+          <div class="form-group" id="custom-split-group" style="display:none;">
+            <label>Miles</label>
+            <input type="number" id="custom-split" placeholder="e.g. 10" min="0.1" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Goal Hours</label>
+            <input type="number" id="split-h" placeholder="3" min="0">
+          </div>
+          <div class="form-group">
+            <label>Goal Minutes</label>
+            <input type="number" id="split-m" placeholder="30" min="0" max="59">
+          </div>
+          <div class="form-group">
+            <label>Goal Seconds</label>
+            <input type="number" id="split-s" placeholder="0" min="0" max="59">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="max-width:200px;">
+            <label>Show splits per</label>
+            <select id="split-unit">
+              <option value="mile">Mile</option>
+              <option value="km">Kilometer</option>
+            </select>
+          </div>
+          <div class="form-group" style="max-width:200px;">
+            <label>Strategy</label>
+            <select id="split-strategy">
+              <option value="even">Even Pace</option>
+              <option value="negative">Negative Split (last half faster)</option>
+              <option value="positive">Positive Split (start faster)</option>
+            </select>
+          </div>
+        </div>
+        <div class="error-msg" id="err-splits">Please enter a valid goal time.</div>
+        <button class="btn-calc" onclick="generateSplits()">Generate Splits</button>
+        <button class="btn-secondary" onclick="clearSplits()">Clear</button>
+
+        <div class="result-box" id="result-splits">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <div class="result-label">Even Pace Target</div>
+              <div class="result-main" id="split-pace-display">–</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="result-label">Goal Finish</div>
+              <div style="font-size:1.6rem; font-weight:800; color:var(--green);" id="split-goal-display">–</div>
+            </div>
+          </div>
+          <hr class="divider">
+          <div style="display:grid; grid-template-columns: 52px 1fr 70px 70px; gap: 6px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); padding: 0 0 8px 0;">
+            <span>Mile</span><span></span><span style="text-align:right;">Split</span><span style="text-align:right;">Total</span>
+          </div>
+          <div class="splits-list" id="splits-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ FOOTER ════════════════════ -->
+  <div class="app-footer">
+    <p>PaceForge ⚡ &nbsp;·&nbsp; <a href="scratch.html">Running Page</a> &nbsp;·&nbsp; <a href="index.html">Portfolio</a></p>
+    <p style="margin-top:6px; font-size:0.72rem;">Race predictions use Riegel's Formula (1981). For educational purposes only.</p>
+  </div>
+
+  <script>
+    /* ══════════════════════════════════════════
+       UTILITY FUNCTIONS
+    ══════════════════════════════════════════ */
+
+    // Convert total seconds to H:MM:SS or M:SS string
+    function secsToString(totalSecs, alwaysHours = false) {
+      const h = Math.floor(totalSecs / 3600);
+      const m = Math.floor((totalSecs % 3600) / 60);
+      const s = Math.round(totalSecs % 60);
+      const mm = String(m).padStart(2,'0');
+      const ss = String(s).padStart(2,'0');
+      if (h > 0 || alwaysHours) return `${h}:${mm}:${ss}`;
+      return `${m}:${ss}`;
+    }
+
+    // Pace per mile → "M:SS /mi"
+    function formatPace(secsPerMile) {
+      const m = Math.floor(secsPerMile / 60);
+      const s = Math.round(secsPerMile % 60);
+      return `${m}:${String(s).padStart(2,'0')}`;
+    }
+
+    function getInputSecs(hId, mId, sId) {
+      const h = parseFloat(document.getElementById(hId).value) || 0;
+      const m = parseFloat(document.getElementById(mId).value) || 0;
+      const s = parseFloat(document.getElementById(sId).value) || 0;
+      return h * 3600 + m * 60 + s;
+    }
+
+    function getDistMiles(selectId, customId) {
+      const sel = document.getElementById(selectId).value;
+      if (sel === 'custom') {
+        const v = parseFloat(document.getElementById(customId).value);
+        return isNaN(v) ? null : v;
+      }
+      return parseFloat(sel);
+    }
+
+    /* ══════════════════════════════════════════
+       TAB SWITCHING
+    ══════════════════════════════════════════ */
+    function switchTab(tab) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-' + tab).classList.add('active');
+      event.target.classList.add('active');
+      if (tab === 'predict') renderBenchmarks();
+    }
+
+    /* ══════════════════════════════════════════
+       MODE TOGGLE (Pace Calculator)
+    ══════════════════════════════════════════ */
+    let currentMode = 'pace';
+    function setMode(m) {
+      currentMode = m;
+      document.getElementById('mode-pace').style.display = m === 'pace' ? '' : 'none';
+      document.getElementById('mode-time').style.display = m === 'time' ? '' : 'none';
+      document.getElementById('mode-btn-pace').classList.toggle('active', m === 'pace');
+      document.getElementById('mode-btn-time').classList.toggle('active', m === 'time');
+    }
+
+    // Show/hide custom distance inputs
+    document.getElementById('dist-a').addEventListener('change', function() {
+      document.getElementById('custom-dist-group-a').style.display = this.value === 'custom' ? '' : 'none';
+    });
+    document.getElementById('dist-b').addEventListener('change', function() {
+      document.getElementById('custom-dist-group-b').style.display = this.value === 'custom' ? '' : 'none';
+    });
+    document.getElementById('split-dist').addEventListener('change', function() {
+      document.getElementById('custom-split-group').style.display = this.value === 'custom' ? '' : 'none';
+    });
+
+    /* ══════════════════════════════════════════
+       PANEL 1 — PACE CALCULATOR
+    ══════════════════════════════════════════ */
+    function calcPace() {
+      const err = document.getElementById('err-a');
+      const res = document.getElementById('result-a');
+      err.classList.remove('show');
+      res.classList.remove('show');
+
+      const totalSecs = getInputSecs('hours-a', 'mins-a', 'secs-a');
+      if (totalSecs <= 0) { err.classList.add('show'); return; }
+
+      const dist = getDistMiles('dist-a', 'custom-dist-a');
+      if (!dist || dist <= 0) { err.textContent = 'Please enter a valid distance.'; err.classList.add('show'); return; }
+
+      const secsPerMile = totalSecs / dist;
+      const secsPerKm   = secsPerMile / 1.60934;
+      const mph  = (dist / (totalSecs / 3600)).toFixed(2);
+      const kph  = (dist * 1.60934 / (totalSecs / 3600)).toFixed(2);
+
+      document.getElementById('pace-mi').textContent = formatPace(secsPerMile) + ' /mi';
+      document.getElementById('pace-km').textContent = formatPace(secsPerKm) + ' /km';
+      document.getElementById('pace-mph').textContent = mph + ' mph';
+      document.getElementById('pace-kph').textContent = kph + ' kph';
+      document.getElementById('pace-total').textContent = secsToString(totalSecs, true);
+
+      // Benchmark comparison
+      const marathonSecs = (dist === 26.2188) ? totalSecs : totalSecs * Math.pow(26.2188 / dist, 1.06);
+      document.getElementById('pace-benchmark').innerHTML = getBenchmarkComment(marathonSecs);
+
+      res.classList.add('show');
+    }
+
+    function clearPace() {
+      ['hours-a','mins-a','secs-a'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('result-a').classList.remove('show');
+      document.getElementById('err-a').classList.remove('show');
+    }
+
+    function calcTime() {
+      const err = document.getElementById('err-b');
+      const res = document.getElementById('result-b');
+      err.classList.remove('show');
+      res.classList.remove('show');
+
+      const paceMin = parseFloat(document.getElementById('pace-min-b').value) || 0;
+      const paceSec = parseFloat(document.getElementById('pace-sec-b').value) || 0;
+      const paceSecsPerMile = paceMin * 60 + paceSec;
+      if (paceSecsPerMile <= 0) { err.classList.add('show'); return; }
+
+      const dist = getDistMiles('dist-b', 'custom-dist-b');
+      if (!dist || dist <= 0) { err.textContent = 'Please enter a valid distance.'; err.classList.add('show'); return; }
+
+      const totalSecs   = paceSecsPerMile * dist;
+      const secsPerKm   = paceSecsPerMile / 1.60934;
+      const mph  = (3600 / paceSecsPerMile).toFixed(2);
+      const kph  = (3600 / paceSecsPerMile * 1.60934).toFixed(2);
+
+      document.getElementById('finish-time').textContent = secsToString(totalSecs, true);
+      document.getElementById('b-pace-km').textContent   = formatPace(secsPerKm) + ' /km';
+      document.getElementById('b-speed-mph').textContent = mph + ' mph';
+      document.getElementById('b-speed-kph').textContent = kph + ' kph';
+
+      res.classList.add('show');
+    }
+
+    function clearTime() {
+      ['pace-min-b','pace-sec-b'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('result-b').classList.remove('show');
+      document.getElementById('err-b').classList.remove('show');
+    }
+
+    function getBenchmarkComment(projectedMarathonSecs) {
+      const mins = projectedMarathonSecs / 60;
+      let msg = '';
+      if (mins < 130) msg = '🌟 World-class elite territory!';
+      else if (mins < 180) msg = '🔥 Sub-3 hour marathon level — exceptional!';
+      else if (mins < 210) msg = '💪 Strong competitive performance!';
+      else if (mins < 240) msg = '👏 Solid runner — sub-4 hour territory!';
+      else if (mins < 300) msg = '🎉 Great effort — completing a marathon is an achievement!';
+      else msg = '🏃 Keep training — every mile builds toward your goal!';
+      return `<div style="font-size:0.9rem; color:var(--green); font-weight:600; margin-top:8px;">${msg}</div>`;
+    }
+
+    /* ══════════════════════════════════════════
+       PANEL 2 — RACE PREDICTOR
+    ══════════════════════════════════════════ */
+    const RACES = [
+      { name: '1 Mile',        distKm: 1.60934,  distMi: 1,       wr: 222   },  // 3:43.13
+      { name: '5K',            distKm: 5,         distMi: 3.10686, wr: 757   },  // 12:37
+      { name: '10K',           distKm: 10,        distMi: 6.21371, wr: 1577  },  // 26:17
+      { name: 'Half Marathon', distKm: 21.0975,   distMi: 13.1094, wr: 3476  },  // 57:56
+      { name: 'Marathon',      distKm: 42.195,    distMi: 26.2188, wr: 7160  },  // 1:59:40
+    ];
+
+    function predictRaces() {
+      const err = document.getElementById('err-pred');
+      const res = document.getElementById('result-pred');
+      err.classList.remove('show');
+      res.classList.remove('show');
+
+      const inputSecs  = getInputSecs('pred-h', 'pred-m', 'pred-s');
+      if (inputSecs <= 0) { err.classList.add('show'); return; }
+      const inputDistKm = parseFloat(document.getElementById('pred-dist').value);
+
+      const tbody = document.getElementById('pred-tbody');
+      tbody.innerHTML = '';
+
+      RACES.forEach(race => {
+        const predicted = inputSecs * Math.pow(race.distKm / inputDistKm, 1.06);
+        const pacePerMi = predicted / race.distMi;
+        const pctAboveWR = ((predicted / race.wr - 1) * 100).toFixed(1);
+        const isInput = race.distKm === inputDistKm;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${race.name}${isInput ? '<span class="input-race-badge">YOUR INPUT</span>' : ''}</td>
+          <td class="time-cell">${secsToString(predicted, predicted >= 3600)}</td>
+          <td class="pace-cell">${formatPace(pacePerMi)} /mi</td>
+          <td class="diff-cell">+${pctAboveWR}% above WR</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      res.classList.add('show');
+    }
+
+    function clearPredict() {
+      ['pred-h','pred-m','pred-s'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('result-pred').classList.remove('show');
+      document.getElementById('err-pred').classList.remove('show');
+    }
+
+    const BENCHMARKS = [
+      { name: 'Eliud Kipchoge',    time: '1:59:40', secs: 7180,  desc: 'Ineos 1:59 Challenge, Vienna 2019 (unofficial)' },
+      { name: 'Kelvin Kiptum',     time: '2:00:35', secs: 7235,  desc: 'Chicago Marathon 2023 — Official WR (M)' },
+      { name: 'Tigst Assefa',      time: '2:11:53', secs: 7913,  desc: 'Berlin Marathon 2023 — Official WR (W)' },
+      { name: 'Sub-3 Hour',        time: '2:59:59', secs: 10799, desc: 'Top ~2% of all marathon finishers' },
+      { name: 'Sub-4 Hour',        time: '3:59:59', secs: 14399, desc: 'Top ~15% of all marathon finishers' },
+      { name: 'Average Finisher',  time: '4:29:00', secs: 16140, desc: 'Global marathon average across all genders' },
+    ];
+
+    function renderBenchmarks() {
+      const grid = document.getElementById('benchmark-grid');
+      if (grid.children.length) return; // already rendered
+      BENCHMARKS.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'benchmark-card';
+        div.innerHTML = `
+          <div class="b-name">${b.name}</div>
+          <div class="b-time">${b.time}</div>
+          <div class="b-desc">${b.desc}</div>
+          <div class="b-bar"></div>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    /* ══════════════════════════════════════════
+       PANEL 3 — SPLIT GENERATOR
+    ══════════════════════════════════════════ */
+    function generateSplits() {
+      const err  = document.getElementById('err-splits');
+      const res  = document.getElementById('result-splits');
+      err.classList.remove('show');
+      res.classList.remove('show');
+
+      const goalSecs = getInputSecs('split-h', 'split-m', 'split-s');
+      if (goalSecs <= 0) { err.classList.add('show'); return; }
+
+      const dist = getDistMiles('split-dist', 'custom-split');
+      if (!dist || dist <= 0) { err.textContent = 'Please enter a valid distance.'; err.classList.add('show'); return; }
+
+      const unit      = document.getElementById('split-unit').value;
+      const strategy  = document.getElementById('split-strategy').value;
+
+      // Convert dist to appropriate units
+      const distInUnit = unit === 'mile' ? dist : dist * 1.60934;
+      const numSplits  = Math.floor(distInUnit);
+      const remainder  = distInUnit - numSplits;
+
+      const secsPerUnit = goalSecs / distInUnit;
+
+      // Strategy multipliers
+      let multipliers = [];
+      for (let i = 0; i <= numSplits; i++) {
+        if (strategy === 'even') {
+          multipliers.push(1);
+        } else if (strategy === 'negative') {
+          // First half ~2% slower, second half ~2% faster
+          const half = distInUnit / 2;
+          multipliers.push(i < half ? 1.02 : 0.98);
+        } else { // positive
+          const half = distInUnit / 2;
+          multipliers.push(i < half ? 0.97 : 1.03);
+        }
+      }
+
+      // Normalize so total time = goalSecs
+      const rawTotal = multipliers.slice(0, numSplits).reduce((a,b) => a + b, 0) * secsPerUnit
+                       + (remainder > 0 ? multipliers[numSplits] * secsPerUnit * remainder : 0);
+      const normFactor = goalSecs / rawTotal;
+
+      const evenPace = secsPerUnit;
+      document.getElementById('split-pace-display').textContent = formatPace(unit === 'mile' ? evenPace : evenPace / 1.60934 * 1.60934) + ` /${unit}`;
+      document.getElementById('split-goal-display').textContent = secsToString(goalSecs, goalSecs >= 3600);
+
+      const list = document.getElementById('splits-list');
+      list.innerHTML = '';
+
+      let cumSecs = 0;
+      const maxSplit = secsPerUnit * 1.08; // for bar scaling
+
+      for (let i = 0; i <= numSplits; i++) {
+        const isLast = (i === numSplits && remainder > 0);
+        if (isLast && remainder < 0.01) break;
+
+        const frac      = isLast ? remainder : 1;
+        const thisSecs  = secsPerUnit * frac * multipliers[i] * normFactor;
+        cumSecs += thisSecs;
+
+        const label = isLast ? `${unit === 'mile' ? 'Fin' : 'Fin'}` : `${unit === 'mile' ? 'Mi' : 'km'} ${i+1}`;
+        const barPct = Math.min((thisSecs / maxSplit) * 100, 100);
+
+        // Color: green = fast, orange = on pace, red = slow
+        const deviation = (thisSecs / (secsPerUnit * frac) - 1);
+        const barColor = deviation < -0.015 ? 'var(--green)' :
+                         deviation > 0.015  ? 'var(--red)' :
+                         'var(--blue)';
+
+        const row = document.createElement('div');
+        row.className = 'split-row';
+        row.style.animationDelay = (i * 0.04) + 's';
+        row.innerHTML = `
+          <div class="split-num">${label}</div>
+          <div class="split-bar-wrap">
+            <div class="split-bar" style="width:${barPct}%; background:${barColor}20; color:${barColor};">
+              ${formatPace(thisSecs / frac)} /${unit}
+            </div>
+          </div>
+          <div class="split-time">${secsToString(thisSecs)}</div>
+          <div class="split-cumulative">${secsToString(cumSecs, cumSecs >= 3600)}</div>
+        `;
+        list.appendChild(row);
+      }
+
+      res.classList.add('show');
+    }
+
+    function clearSplits() {
+      ['split-h','split-m','split-s'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('result-splits').classList.remove('show');
+      document.getElementById('err-splits').classList.remove('show');
+      document.getElementById('splits-list').innerHTML = '';
+    }
+  </script>
+
+</body>
+</html>

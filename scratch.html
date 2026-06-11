@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  scratch.html — From-Scratch Running Page
+  ✓ No Bootstrap used anywhere
+  ✓ Linked to scratch-style.css (custom stylesheet, written from scratch)
+  ✓ Nested lists (ordered list containing unordered lists)
+  ✓ Images from Unsplash (not from Bootstrap theme)
+  ✓ Embedded YouTube video
+  ✓ On-page anchor (#top, #training, #video, #data, #facts)
+  ✓ Custom background color/image in hero via CSS
+  ✓ Live Tableau embed
+  ✓ Navigation back to index.html
+  ✓ Link to webapp.html (PaceForge)
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Running | [Your Name]</title>
+  <!-- Custom stylesheet (no Bootstrap) -->
+  <link rel="stylesheet" href="scratch-style.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════
+       ON-PAGE ANCHOR: #top
+  ══════════════════════════════ -->
+  <span id="top"></span>
+
+  <!-- ══════════════════════════════
+       NAVIGATION
+  ══════════════════════════════ -->
+  <nav class="site-nav">
+    <a href="#top" class="nav-brand">🏃 RunLife</a>
+    <ul>
+      <li><a href="#about-running">About</a></li>
+      <li><a href="#training">Training</a></li>
+      <li><a href="#video">Watch</a></li>
+      <li><a href="#data">Data</a></li>
+      <li><a href="#facts">Facts</a></li>
+      <li><a href="index.html">← Portfolio</a></li>
+      <li><a href="webapp.html">PaceForge ⚡</a></li>
+    </ul>
+  </nav>
+
+  <!-- ══════════════════════════════
+       HERO  (custom background image via CSS)
+  ══════════════════════════════ -->
+  <div class="hero-header">
+    <h1>Run Your World</h1>
+    <p class="hero-sub">
+      "It's very hard in the beginning to understand that the whole idea is not to beat the other runners.
+      Eventually you learn that the competition is against the little voice inside you that wants you to quit."
+      <br><em>— George Sheehan</em>
+    </p>
+    <div class="scroll-hint">↓ &nbsp; scroll to explore &nbsp; ↓</div>
+  </div>
+
+  <!-- ══════════════════════════════
+       STATS BAR  (div.stats-bar — DIV #3 from CSS)
+  ══════════════════════════════ -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-number">60,000</div>
+      <div class="stat-label">Steps per Marathon</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">1,700+</div>
+      <div class="stat-label">World Marathon Majors Finishers/yr</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">1:59:40</div>
+      <div class="stat-label">Marathon World Record (Kipchoge)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">30%</div>
+      <div class="stat-label">Injury Risk Reduction from Consistent Training</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       ABOUT RUNNING SECTION
+       ON-PAGE ANCHOR: #about-running
+  ══════════════════════════════ -->
+  <span id="about-running"></span>
+  <div class="content-section">
+    <h2>Why I Run</h2>
+    <div class="section-rule"></div>
+
+    <!-- Image from Unsplash (not from Bootstrap theme) ✓ -->
+    <img
+      class="run-image"
+      src="https://images.unsplash.com/photo-1461897104016-0b3b00cc81ee?w=800&q=80"
+      alt="Runner on a track at sunset"
+    >
+
+    <p>
+      Running started as a way to clear my head between study sessions. What began as reluctant 20-minute jogs
+      evolved into something I genuinely crave—early mornings before campus wakes up, the smell of rain on asphalt,
+      the particular silence of mile four when everything stops hurting and your mind finally goes quiet.
+    </p>
+    <p>
+      Running teaches you the same lessons over and over: that discomfort is temporary, that progress is
+      non-linear, and that showing up on the hard days matters more than anything you do on the easy ones.
+      Those lessons live in everything else I do.
+    </p>
+
+    <a class="anchor-link" href="#training">See My Training Plan ↓</a>
+  </div>
+
+  <!-- ══════════════════════════════
+       TRAINING SECTION
+       ON-PAGE ANCHOR: #training
+       Ordered list containing unordered lists (nested lists ✓)
+  ══════════════════════════════ -->
+  <span id="training"></span>
+  <div class="content-section alt-bg">
+    <div style="max-width:960px; margin:0 auto; padding: 0 24px;">
+      <h2>8-Week Base Training Plan</h2>
+      <div class="section-rule"></div>
+      <p>
+        Whether you're training for your first 5K or building your aerobic base for a marathon,
+        consistency beats intensity every time. Here's the structure I follow—and the gear that makes each phase possible.
+      </p>
+
+      <!-- ORDERED LIST containing UNORDERED LISTS ✓ -->
+      <ol class="training-plan">
+
+        <li>
+          Easy Running (Weeks 1–2)
+          <span class="li-desc">Run at a conversational pace — you should be able to hold a full sentence. This builds your aerobic engine without burning you out. Aim for 3–4 runs per week.</span>
+          <ul class="gear-list">
+            <li>Cushioned daily trainer (Brooks Ghost, ASICS Gel-Nimbus)</li>
+            <li>Moisture-wicking running socks</li>
+            <li>GPS watch or running app (Garmin, Strava)</li>
+          </ul>
+        </li>
+
+        <li>
+          Tempo Runs (Weeks 3–4)
+          <span class="li-desc">Run at "comfortably hard" — you can speak a few words but not full sentences. These runs build your lactate threshold and teach your body to sustain faster paces.</span>
+          <ul class="gear-list">
+            <li>Racing flat or tempo shoe (Nike Pegasus, Saucony Kinvara)</li>
+            <li>Heart rate monitor or chest strap</li>
+            <li>Foam roller for recovery</li>
+          </ul>
+        </li>
+
+        <li>
+          Long Runs (Weeks 5–6)
+          <span class="li-desc">The foundation of any distance training program. Run your longest run of the week at an easy, relaxed pace. Add 10% distance week-over-week at most.</span>
+          <ul class="gear-list">
+            <li>Hydration vest or handheld water bottle</li>
+            <li>Energy gels or chews (every 45–60 min past 60 min total)</li>
+            <li>Anti-chafe balm (Body Glide)</li>
+            <li>Sun protection: hat, SPF 50 sunscreen</li>
+          </ul>
+        </li>
+
+        <li>
+          Speed Work (Weeks 7–8)
+          <span class="li-desc">Track intervals, hill repeats, and strides build raw speed and neuromuscular efficiency. These are intense—keep them to one session per week maximum.</span>
+          <ul class="gear-list">
+            <li>Lightweight racing flat or spike (for track)</li>
+            <li>Track or measured route</li>
+            <li>Interval timer app (WorkOutDoors, Intervals Pro)</li>
+          </ul>
+        </li>
+
+        <li>
+          Recovery Week
+          <span class="li-desc">After every 3 hard weeks, take a recovery week: cut volume by 30–40%. Sleep, stretch, and let your body absorb the adaptations from the previous weeks.</span>
+          <ul class="gear-list">
+            <li>Yoga mat and stretching routine</li>
+            <li>Ice bath or contrast shower</li>
+            <li>Sleep tracker (Oura Ring, Whoop)</li>
+          </ul>
+        </li>
+
+      </ol>
+
+      <br>
+      <a class="anchor-link" href="#video">Watch Running in Action ↓</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       SECOND IMAGE (additional ✓)
+  ══════════════════════════════ -->
+  <div class="content-section">
+    <img
+      class="run-image"
+      src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=800&q=80"
+      alt="Trail runner in the mountains"
+      style="margin-bottom:32px;"
+    >
+  </div>
+
+  <!-- ══════════════════════════════
+       YOUTUBE VIDEO
+       ON-PAGE ANCHOR: #video
+       Embedded YouTube video ✓ (works once hosted online)
+  ══════════════════════════════ -->
+  <span id="video"></span>
+  <div class="content-section" style="padding-top:0;">
+    <h2>Running in Motion</h2>
+    <div class="section-rule"></div>
+    <p>
+      There's no better way to appreciate the beauty of running than watching elite athletes move at the edge
+      of human capability. Watch the race below — and notice the form, the strategy, and the sheer will.
+    </p>
+
+    <!-- YouTube embed ✓
+         NOTE: Replace "oAFPsF5LLSM" with any YouTube video ID you prefer.
+         Go to a YouTube running video → Share → Embed → copy the 11-character ID.
+         Format: https://www.youtube.com/embed/[VIDEO_ID]
+         This will not display locally but works when hosted on GitHub Pages. -->
+    <div class="video-container">
+      <iframe
+        src="https://www.youtube.com/embed/oAFPsF5LLSM"
+        title="Marathon Running Video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <br><br>
+    <a class="anchor-link" href="#data">See Running Data ↓</a>
+  </div>
+
+  <!-- ══════════════════════════════
+       TABLEAU EMBED
+       ON-PAGE ANCHOR: #data
+       Live interactive Tableau visualization ✓
+  ══════════════════════════════ -->
+  <span id="data"></span>
+  <div class="content-section alt-bg">
+    <div style="max-width:960px; margin:0 auto; padding: 0 24px;">
+      <h2>Running Data &amp; Analytics</h2>
+      <div class="section-rule"></div>
+      <p>
+        Data is at the heart of modern running performance. The interactive visualization below
+        explores real marathon data — drill in, filter, and discover patterns in how elite and amateur
+        runners compare across distance and demographics.
+      </p>
+
+      <!-- ══ TABLEAU PUBLIC EMBED ══
+           Live, interactive Tableau visualization ✓
+
+           HOW TO SWAP THIS OUT:
+           1. Go to https://public.tableau.com/app/discover
+           2. Search "marathon" or "running" to find a viz you like
+           3. Open the viz → click "Share" → "Embed Code"
+           4. Replace everything inside div.tableau-container with that embed code.
+
+           The viz below is the NYC Marathon Dashboard from Tableau Public.
+      -->
+      <div class="tableau-container">
+        <div class='tableauPlaceholder' id='viz1' style='position: relative'>
+          <noscript>
+            <a href='#'>
+              <img
+                alt='NYC Marathon Dashboard'
+                src='https://public.tableau.com/static/images/NY/NYCMarathon_16842979/NYCMarathon/1_rss.png'
+                style='border: none'
+              >
+            </a>
+          </noscript>
+          <object class='tableauViz' style='display:none;'>
+            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+            <param name='embed_code_version' value='3' />
+            <param name='site_root' value='' />
+            <param name='name' value='NYCMarathon_16842979/NYCMarathon' />
+            <param name='tabs' value='no' />
+            <param name='toolbar' value='yes' />
+            <param name='animate_transition' value='yes' />
+            <param name='display_static_image' value='yes' />
+            <param name='display_spinner' value='yes' />
+            <param name='display_overlay' value='yes' />
+            <param name='display_count' value='yes' />
+            <param name='language' value='en-US' />
+          </object>
+        </div>
+        <script type='text/javascript'>
+          var divElement = document.getElementById('viz1');
+          var vizElement  = divElement.getElementsByTagName('object')[0];
+          vizElement.style.width  = '100%';
+          vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px';
+          var scriptElement = document.createElement('script');
+          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+          vizElement.parentNode.insertBefore(scriptElement, vizElement);
+        </script>
+      </div>
+
+      <br>
+      <a class="anchor-link" href="#facts">Running Facts ↓</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       RUNNING FACTS  (div.fact-grid — DIV #4)
+       ON-PAGE ANCHOR: #facts
+  ══════════════════════════════ -->
+  <span id="facts"></span>
+  <div class="content-section">
+    <h2>Things I've Learned About Running</h2>
+    <div class="section-rule"></div>
+
+    <div class="fact-grid">
+      <div class="fact-card">
+        <h4>80/20 Rule</h4>
+        <p>Elite runners spend ~80% of their training at low intensity and only 20% at high intensity. Most beginners invert this — and burn out.</p>
+      </div>
+      <div class="fact-card">
+        <h4>Cadence Matters</h4>
+        <p>The optimal stride rate is around 170–180 steps per minute regardless of pace. Higher cadence = less impact force = fewer injuries.</p>
+      </div>
+      <div class="fact-card">
+        <h4>The Wall Is Real</h4>
+        <p>At mile 18–20 in a marathon, glycogen stores deplete. Your body literally starts burning fat as fuel — which is much slower. Train your gut before race day.</p>
+      </div>
+      <div class="fact-card">
+        <h4>Shoes Don't Prevent Injuries</h4>
+        <p>Research shows that comfort — not cushioning type — is the strongest predictor of injury prevention. Wear what feels right.</p>
+      </div>
+      <div class="fact-card">
+        <h4>Sleep Is Training</h4>
+        <p>Growth hormone (used for muscle repair) is released almost entirely during deep sleep. Skipping sleep skips recovery. 8+ hours is non-negotiable for runners.</p>
+      </div>
+      <div class="fact-card">
+        <h4>Mental > Physical</h4>
+        <p>Studies show that when you feel like you're at 100% effort, you're actually at about 60% of your physiological maximum. Your brain quits before your body does.</p>
+      </div>
+    </div>
+
+    <br><br>
+    <!-- Back to top anchor ✓ -->
+    <a class="back-to-top" href="#top">↑ &nbsp; Back to Top</a>
+  </div>
+
+  <!-- ══════════════════════════════
+       FOOTER — navigation back to professional pages ✓
+  ══════════════════════════════ -->
+  <footer class="site-footer">
+    <p style="margin-bottom: 12px; font-size: 1rem;">
+      Ready to find your pace?
+      <a href="webapp.html" style="margin-left:8px;">Try PaceForge ⚡</a>
+    </p>
+    <p>
+      <a href="index.html">← Back to Portfolio</a>
+      &nbsp;·&nbsp;
+      <a href="webapp.html">PaceForge App ⚡</a>
+      &nbsp;·&nbsp;
+      <a href="#top">↑ Top of Page</a>
+    </p>
+    <p style="margin-top:16px; font-size: 0.78rem; color: rgba(255,255,255,0.35);">
+      Page built from scratch — no Bootstrap used
+    </p>
+  </footer>
+
+</body>
+</html>
